@@ -22,8 +22,17 @@ function CartPage() {
     const totalItems = cartItems.reduce((acc, item) => acc + item.qty, 0)
     const totalPrice = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
 
+    // const checkoutHandler = () => {
+    //     navigate('/login?redirect=shipping')
+    // }
+
     const checkoutHandler = () => {
-        navigate('/login?redirect=shipping')
+        const userInfo = localStorage.getItem('userInfo')
+        if(!userInfo) {
+            navigate('/login?redirect=shipping')
+        } else {
+            navigate('/shipping')
+        }
     }
 
     return (

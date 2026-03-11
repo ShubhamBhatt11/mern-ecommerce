@@ -77,4 +77,38 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-export { registerUser, loginUser, getUserProfile };
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+const updateUserProfile = async (req, res) => {
+    try {
+        console.log('inspecting updateUserProfile')
+        console.log('req.body', req.body)
+        console.log('req.user', req.user)
+        const user = await User.findById(req.user._id)
+
+        if(user) {
+            user.name = req.body.name || user.name
+            user.email = req.body.email || user.email
+            // if(req.body.password) {
+            //     user.password = req.body.password
+            // }
+            if(req.body.password && req.body.password !== '') {  // ← fix here
+                user.password = req.body.password
+            }
+            const updatedUser = await user.save()
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                isAdmin: updatedUser.isAdmin,
+                token: generateToken(updatedUser._id)  // ← fix here
+            })
+        } else {
+            res.status(404).json({ message: 'User not found' })
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile }
